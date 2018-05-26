@@ -1,4 +1,5 @@
 
+
 function getRandomSpeed() {
     return Math.floor(Math.random() * (200 - 50 + 1)) + 50;
 }
@@ -17,6 +18,18 @@ function getRandomRow(){
 
 
 // Enemies our player must avoid
+function collision(player, enemies){
+  for (var i = 0; i< enemies.length; i++){
+    if(player.x < enemies[i].x + 50 &&
+       player.x + 50 > enemies[i].x &&
+       player.y < enemies[i].y + 50 &&
+       50 + player.y > enemies[i].y){
+         return true;
+       }
+  }
+ return false;
+}
+
 var Enemy = function(x1) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -54,15 +67,20 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(){
-
+var Player = function(enemies){
 
   this.sprite = 'images/char-boy.png';
-  this.x = 0;
-  this.y = 54;
+  this.x = 200;
+  this.y = 370;
+  this.enemies = enemies;
 }
 
 Player.prototype.update = function(dt){
+
+if (collision(this,this.enemies)){
+  this.x = 200;
+  this.y = 370;
+}
 
 }
 
@@ -72,13 +90,44 @@ Player.prototype.render = function() {
 
 Player.prototype.handleInput = function(direction){
 
+    switch(direction){
+      case "right":
+        if (this.x <= 300){
+        this.x = this.x + 100;
+      }
+        break;
+
+      case "left":
+        if (this.x >= 100){
+        this.x = this.x - 100;
+      }
+        break;
+
+      case "up":
+        if (this.y >= 40){
+        this.y = this.y - 80;
+      }
+        break;
+
+      case "down":
+        if (this.y <= 400){
+        this.y = this.y + 80;
+      }
+        break;
+    }
+
+    if (this.y < 10){
+      this.x = 200;
+      this.y = 370;
+      alert("You are the winner")
+    }
 }
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
-var allEnemies = [new Enemy(0,60), new Enemy(0,140), new Enemy(0,220)];
+var allEnemies = [new Enemy(0), new Enemy(0), new Enemy(0)];
 
 // Place the player object in a variable called player
-var player = new Player();
+var player = new Player(allEnemies);
 
 
 
