@@ -1,44 +1,48 @@
 
+const enemySize = 50,
+  playerInitialX = 200,
+  playerInitialY = 370;
 
 function getRandomSpeed() {
-    return Math.floor(Math.random() * (200 - 50 + 1)) + 50;
+  return Math.floor(Math.random() * (200 - 50 + 1)) + 50;
 }
 
+// Return one of the three rows for enemies
 function getRandomRow(){
   var randomRow = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
 
-    if (randomRow === 1){
-      return 60;
-    } else if (randomRow === 2) {
-      return 140;
-      } else {
-      return 220;
-      }
-    }
+  if (randomRow === 1){
+    return 60;
+  } else if (randomRow === 2) {
+    return 140;
+  } else {
+    return 220;
+  }
+}
 
 
 // Enemies our player must avoid
 function collision(player, enemies){
   for (var i = 0; i< enemies.length; i++){
-    if(player.x < enemies[i].x + 50 &&
-       player.x + 50 > enemies[i].x &&
-       player.y < enemies[i].y + 50 &&
-       50 + player.y > enemies[i].y){
-         return true;
-       }
+    if(player.x < enemies[i].x + enemySize &&
+      player.x + enemySize > enemies[i].x &&
+      player.y < enemies[i].y + enemySize &&
+      enemySize + player.y > enemies[i].y){
+      return true;
+    }
   }
- return false;
+  return false;
 }
 
 var Enemy = function(x1) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.x = x1;
-    this.y = getRandomRow();
-    this.s = getRandomSpeed();
+  // Variables applied to each of our instances go here,
+  // we've provided one for you to get started
+  // The image/sprite for our enemies, this uses
+  // a helper we've provided to easily load images
+  this.sprite = 'images/enemy-bug.png';
+  this.x = x1;
+  this.y = getRandomRow();
+  this.s = getRandomSpeed();
 
 };
 
@@ -53,14 +57,14 @@ Enemy.prototype.update = function(dt) {
     this.y = getRandomRow();
   }
 
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+  // You should multiply any movement by the dt parameter
+  // which will ensure the game runs at the same speed for
+  // all computers.
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 
@@ -70,57 +74,60 @@ Enemy.prototype.render = function() {
 var Player = function(enemies){
 
   this.sprite = 'images/char-boy.png';
-  this.x = 200;
-  this.y = 370;
+  this.x = playerInitialX;
+  this.y = playerInitialY;
   this.enemies = enemies;
 }
 
 Player.prototype.update = function(dt){
 
-if (collision(this,this.enemies)){
-  this.x = 200;
-  this.y = 370;
-}
+  if (collision(this,this.enemies)){
+    this.x = playerInitialX;
+    this.y = playerInitialY;
+  }
 
 }
 
 Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 Player.prototype.handleInput = function(direction){
+  const xIncrement = 100,
+    yIncrement = 80;
 
-    switch(direction){
-      case "right":
-        if (this.x <= 300){
-        this.x = this.x + 100;
+  // Check we can move in the direction and update the coordinates
+  switch(direction){
+    case "right":
+      if (this.x <= 300){
+        this.x = this.x + xIncrement;
       }
-        break;
+      break;
 
-      case "left":
-        if (this.x >= 100){
-        this.x = this.x - 100;
+    case "left":
+      if (this.x >= xIncrement){
+        this.x = this.x - xIncrement;
       }
-        break;
+      break;
 
-      case "up":
-        if (this.y >= 40){
-        this.y = this.y - 80;
+    case "up":
+      if (this.y >= 40){
+        this.y = this.y - yIncrement;
       }
-        break;
+      break;
 
-      case "down":
-        if (this.y <= 400){
-        this.y = this.y + 80;
+    case "down":
+      if (this.y <= 320){
+        this.y = this.y + yIncrement;
       }
-        break;
-    }
+      break;
+  }
 
-    if (this.y < 10){
-      this.x = 200;
-      this.y = 370;
-      alert("You are the winner")
-    }
+  if (this.y < 10){
+    this.x = playerInitialX;
+    this.y = playerInitialY;
+    alert("You are the winner")
+  }
 }
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -129,17 +136,15 @@ var allEnemies = [new Enemy(0), new Enemy(0), new Enemy(0)];
 // Place the player object in a variable called player
 var player = new Player(allEnemies);
 
-
-
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
+  var allowedKeys = {
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down'
+  };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+  player.handleInput(allowedKeys[e.keyCode]);
 });
